@@ -23,3 +23,9 @@
 # lastSeenOnline - When the crawler saw this ad last online.
 
 import pandas as pd
+
+# reading csv file
+autos = pd.read_csv("autos.csv", encoding='latin1')
+
+autos.info()
+print(autos.head())
