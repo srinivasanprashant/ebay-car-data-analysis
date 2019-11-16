@@ -23,9 +23,20 @@
 # lastSeenOnline - When the crawler saw this ad last online.
 
 import pandas as pd
+import re
+
+
+# Function to convert camel case to snake case
+def convert(name):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
 
 # reading csv file
 autos = pd.read_csv("autos.csv", encoding='latin1')
 
-autos.info()
 print(autos.head())
+print(autos.tail())
+autos.info()
+
+autos_column_names = autos.columns
