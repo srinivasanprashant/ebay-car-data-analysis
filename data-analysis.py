@@ -105,3 +105,28 @@ print(autos["price"].unique().shape)
 print(autos["price"].describe())
 print(autos["price"].value_counts().head(10))
 # print(autos.head())
+
+# Let's look at the data in the columns date_crawled, ad_created and last_seem
+print(autos.loc[:, ["date_crawled", "ad_created", "last_seen"]].head(10))
+# Let's further explore the date_crawled column and generate statistics to draw some inferences
+print(autos["date_crawled"].str[:10].value_counts(normalize=True, dropna=False))
+print(autos["date_crawled"].str[:10].value_counts(normalize=True, dropna=False).sort_index())
+# After exploring date_crawled, the data appears to be equally distributed over all days in
+# the one-month range, except for the last three days (04-05 to 04-07).
+print(autos["ad_created"].str[:10].value_counts(normalize=True, dropna=False))
+print(autos["ad_created"].str[:10].value_counts(normalize=True, dropna=False).sort_index())
+# The ad created dates range from 2015-06 to 2016-4 (almost 10 months). Most created dates appear
+# to be within 1-2 months of the listing date, but a few are almost 10 months old.
+
+print(autos["registration_year"].describe())
+# We could clean up this data set by removing values below 1900 or above 2017. The majority of the
+# registration date years are between 1999 and 2008. The registration_year column contains some odd values
+# The minimum value is 1000, almost a thousand years before cars were invented
+# The maximum value is 9999, many years into the future. This is just erroneous data.
+
+# Remove outliers for registration_year, removing rows where
+# year is <= 1900 or year > 2017
+autos = autos.loc[autos["registration_year"].between(1900, 2017, inclusive=True), :]
+print(autos["registration_year"].describe())
+print(autos["registration_year"].value_counts(normalize=True, dropna=False))
+# The statistics are indicative of the new tighter range of the registration year data
