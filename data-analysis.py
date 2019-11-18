@@ -130,3 +130,50 @@ autos = autos.loc[autos["registration_year"].between(1900, 2017, inclusive=True)
 print(autos["registration_year"].describe())
 print(autos["registration_year"].value_counts(normalize=True, dropna=False))
 # The statistics are indicative of the new tighter range of the registration year data
+
+# Use aggregation to understand the brand column
+# Explore the unique values in the brand column while limiting ourselves to the top 10
+print(autos["brand"].value_counts().head(10))
+print(autos["brand"].value_counts(normalize=True).head(10))
+print(autos["brand"].value_counts().describe())
+# Looking at the top ten list above, the top ten account for almost 25% of all cars listed.
+# Thus, the top ten out of 40 would be a good subset of brands to focus on for aggregation analysis.
+
+# Initialize empty dictionaries
+brand_mean_price = {}
+brand_mean_mileage = {}
+
+# For each of the top ten brands (described above) in our list of data,
+# calculate the mean mileage and mean price, and store the results in a dictionary
+for brand in autos["brand"].value_counts().head(10).index:
+    # assign the mean price to the dictionary, with the brand name as the key
+    brand_mean_price[brand] = autos.loc[autos["brand"]==brand,"price"].mean()
+    # assign the mean mileage to the dictionary, with the brand name as the key
+    brand_mean_mileage[brand] = autos.loc[autos["brand"]==brand,"odometer_km"].mean()
+    # print(autos.loc[autos["brand"]==brand,"price"].describe())
+# Convert both dictionaries to series objects, using the series constructor
+series_brand_mean_price = pd.Series(brand_mean_price)
+series_brand_mean_mileage = pd.Series(brand_mean_mileage)
+# Create a dataframe from the first series object using the dataframe constructor
+df_brand_aggregate = pd.DataFrame(series_brand_mean_price, columns=['mean_price'])
+# Assign the other series as a new column in this dataframe
+df_brand_aggregate["mean_mileage_km"] = series_brand_mean_mileage
+print(df_brand_aggregate.sort_values("mean_mileage_km"))
+print(df_brand_aggregate.describe())
+
+# Although Volkswagen is the most popular brand listed, the mean price is not as high as those of Audi,
+# BMW or Mercedes-Benz, which are several thousands higher. Fiat, Opel and Renault are at the bottom
+# of this list, with mean listed price not even exceeding $3000.
+
+# No clear trend is evident in terms of relationship between mileage and price. The range of average
+# mileage listed is very tight, with the more expensive brands showing higher than average mileage.
+
+#TODO
+# Data cleaning next steps:
+# Identify categorical data that uses german words, translate them and map the values to their english counterparts
+# Convert the dates to be uniform numeric data, so "2016-03-21" becomes the integer 20160321.
+# See if there are particular keywords in the name column that you can extract as new columns
+# Analysis next steps:
+# Find the most common brand/model combinations
+# Split the odometer_km into groups, use aggregation to see if average prices follows any patterns based on the mileage
+# How much cheaper are cars with damage than their non-damaged counterparts?
